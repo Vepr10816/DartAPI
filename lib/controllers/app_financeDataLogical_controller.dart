@@ -15,8 +15,7 @@ class AppFinanceDataLogicalController extends ResourceController {
   @Operation.put('id')
   Future<Response> deleteLogicalFinanceData(
     @Bind.header(HttpHeaders.authorizationHeader) String header,
-    @Bind.path("id") int id,
-    @Bind.query('isDeleted') String isDeleted,
+    @Bind.path("id") int id
   ) async {
     try {
       final currentUserId = AppUtils.getIdFromHeader(header);
@@ -27,24 +26,28 @@ class AppFinanceDataLogicalController extends ResourceController {
       if (financeData.user?.id != currentUserId) {
         return AppResponse.ok(message: "Нет доступа к финансовой записи :(");
       }
-      bool delorback = true;
-      if(isDeleted == "true")
-      {
-        delorback = true;
-      }
-      else if(isDeleted == "false")
-      {
-        delorback = false;
-      }
-      else
-      {
-        return AppResponse.ok(message: "Введено неверное значение");
-      }
       final qDeleteLogicalFinanceData = Query<FinanceData>(managedContext)
         ..where((x) => x.id).equalTo(id)
-        ..values.isDeleted = delorback;
+        ..values.isDeleted = true;
       await qDeleteLogicalFinanceData.update();
-      return AppResponse.ok(message: "Успешное логическое удаление или восстановление финансовой записи");
+      return AppResponse.ok(message: "Успешное логическое удаление финансовой записи");
+    } catch (error) {
+      return AppResponse.serverError(error, message: "Ошибка логического удаления или восстановления финансовой записи");
+    }
+  }
+
+  @Operation.put()
+  Future<Response> returnLogicalFinanceData(
+    @Bind.header(HttpHeaders.authorizationHeader) String header,
+  ) async {
+    try {
+      final currentUserId = AppUtils.getIdFromHeader(header);
+      final qDeleteLogicalFinanceData = Query<FinanceData>(managedContext)
+        ..where((x) => x.isDeleted).equalTo(true)
+        ..where((x) => x.user!.id).equalTo(currentUserId)
+        ..values.isDeleted = false;
+      await qDeleteLogicalFinanceData.update();
+      return AppResponse.ok(message: "Успешное логическое восстановление финансовых записей");
     } catch (error) {
       return AppResponse.serverError(error, message: "Ошибка логического удаления или восстановления финансовой записи");
     }

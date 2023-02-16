@@ -24,8 +24,7 @@ class AppUserConttolelr extends ResourceController {
       // Удаляем не нужные параметры для красивого вывода данных пользователя
       user!.removePropertiesFromBackingMap(['refreshToken', 'accessToken']);
 
-      return AppResponse.ok(
-          message: 'Успешное получение профиля', body: user.backing.contents);
+      return Response.ok(user);
     } catch (e) {
       return AppResponse.serverError(e, message: 'Ошибка получения профиля');
     }

@@ -81,7 +81,8 @@ class AppFinanceDataController extends ResourceController {
 
       final qCreateFinanceData = Query<FinanceData>(managedContext)
         ..where((x) => x.user!.id).equalTo(id)
-        ..where((x) => x.isDeleted).equalTo(false);
+        ..where((x) => x.isDeleted).equalTo(false)
+        ..sortBy((x) => x.id, QuerySortOrder.ascending);
 
       final List<FinanceData> list = await qCreateFinanceData.fetch();
 

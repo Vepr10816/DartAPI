@@ -4,10 +4,12 @@ import 'package:conduit/conduit.dart';
 import 'package:dart_backend/controllers/app_financeDataPagination_controller.dart';
 import 'package:dart_backend/controllers/app_financeData_controller.dart';
 import 'controllers/app_auth_controller.dart';
+import 'controllers/app_category_controller.dart';
 import 'controllers/app_financeDataAudit_controller.dart';
 import 'controllers/app_financeDataLogical_controller.dart';
 import 'controllers/app_token_controller.dart';
 import 'controllers/app_user_controller.dart';
+import 'controllers/app_test_controller.dart';
 import 'model/user.dart';
 import 'model/catigories.dart';
 import 'model/financeData.dart';
@@ -45,7 +47,13 @@ class AppService extends ApplicationChannel{
       .link(() => AppFinanceDataPaginationController(managedContext))
     ..route('finance/history')
       .link(AppTokenContoller.new)!
-      .link(() => AppFinanceDataAuditController(managedContext));
+      .link(() => AppFinanceDataAuditController(managedContext))
+    ..route('test')
+      .link(AppTokenContoller.new)!
+      .link(() => AppTestController(managedContext))
+    ..route('category')
+      .link(AppTokenContoller.new)!
+      .link(() => AppCategoryController(managedContext));
     
   PersistentStore _initDatabase(){
     final username = Platform.environment['DB_USERNAME'] ?? 'postgres';
